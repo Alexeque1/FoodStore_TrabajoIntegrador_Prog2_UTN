@@ -1,4 +1,4 @@
-package integrado.prog2.enums;
+package enums;
 
 public enum Rol {
     ADMIN,
