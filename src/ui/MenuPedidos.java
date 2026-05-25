@@ -30,24 +30,24 @@ public class MenuPedidos {
                     break;
                 case 0:
                     salir = true;
-                    System.out.println("Volviendo al menú principal...");
+                    System.out.println("Volviendo al menu principal...");
                     break;
                 default:
-                    System.out.println("Opción no válida. Intente nuevamente.");
+                    System.out.println("Opcion no valida. Intente nuevamente.");
             }
         }
     }
 
     public void mostrar() {
         System.out.println("==============================================");
-        System.out.println("||        GESTIÓN DE PEDIDOS                ||");
+        System.out.println("||        GESTION DE PEDIDOS                ||");
         System.out.println("==============================================");
         System.out.println("|| 1. Listar pedidos                        ||");
         System.out.println("|| 2. Crear pedido con detalles             ||");
         System.out.println("|| 3. Actualizar estado / forma de pago     ||");
         System.out.println("|| 4. Eliminar pedido                       ||");
-        System.out.println("|| 0. Volver al menú principal              ||");
+        System.out.println("|| 0. Volver al menu principal              ||");
         System.out.println("==============================================");
-        System.out.print("Seleccione una opción: ");
+        System.out.print("Seleccione una opcion: ");
     }
 }

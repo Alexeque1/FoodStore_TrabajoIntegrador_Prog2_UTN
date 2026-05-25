@@ -1,13 +1,15 @@
 package ui;
+
 import java.util.Scanner;
 import services.CategoriaServices;
+import services.ProductoServices;
 import utils.UtilsMenu;
-import utils.UtilsGeneral;
 
 public class MenuPrincipal {
+
     private final Scanner scanner = new Scanner(System.in);
     private final CategoriaServices categoriaServices = new CategoriaServices();
-
+    private final ProductoServices productoServices = new ProductoServices();
     private final MenuCategoria menuCategoria;
     private final MenuProductos menuProductos;
     private final MenuUsuarios menuUsuarios;
@@ -15,7 +17,7 @@ public class MenuPrincipal {
 
     public MenuPrincipal() {
         this.menuCategoria = new MenuCategoria(scanner, categoriaServices);
-        this.menuProductos = new MenuProductos(scanner);
+        this.menuProductos = new MenuProductos(scanner, productoServices, categoriaServices);
         this.menuUsuarios = new MenuUsuarios(scanner);
         this.menuPedidos = new MenuPedidos(scanner);
     }
@@ -43,7 +45,7 @@ public class MenuPrincipal {
                     System.out.println("Saliendo del sistema...");
                     break;
                 default:
-                    System.out.println("Opción no válida. Intente nuevamente.");
+                    System.out.println("Opcion no valida. Intente nuevamente.");
             }
         }
     }
@@ -58,6 +60,6 @@ public class MenuPrincipal {
         System.out.println("|| 4. Pedidos                      ||");
         System.out.println("|| 0. Salir                        ||");
         System.out.println("=====================================");
-        System.out.print("Seleccione una opción: ");
+        System.out.print("Seleccione una opcion: ");
     }
 }
