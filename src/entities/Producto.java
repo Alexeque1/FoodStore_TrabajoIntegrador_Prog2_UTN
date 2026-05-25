@@ -83,6 +83,6 @@ public class Producto extends Base {
 
     @Override
     public String toString() {
-        return "Producto{id=" + getId() + ", nombre='" + nombre + "', precio=" + precio + ", stock=" + stock + ", disponible=" + disponible + "}";
+        return "Producto{id=" + getId() + ", nombre='" + nombre + "', precio=" + precio + ", stock=" + stock + ", disponible=" + disponible + ", categoria=" + (categoria != null ? categoria.getNombre() : "sin categoria") + "}";
     }
 }

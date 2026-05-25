@@ -36,33 +36,33 @@ public class MenuCategoria {
                     break;
                 case 0:
                     volver = true;
-                    System.out.println("Volviendo al menú principal...");
+                    System.out.println("Volviendo al menu principal...");
                     break;
                 default:
-                    System.out.println("Opción no válida. Por favor, intente nuevamente.");
+                    System.out.println("Opcion no valida. Por favor, intente nuevamente.");
             }
         }
     }
 
     public void mostrar() {
         System.out.println("=====================================");
-        System.out.println("||     GESTIÓN DE CATEGORÍAS       ||");
+        System.out.println("||     GESTION DE CATEGORIAS       ||");
         System.out.println("=====================================");
-        System.out.println("|| 1. Listar categorías            ||");
-        System.out.println("|| 2. Crear categoría              ||");
-        System.out.println("|| 3. Editar categoría             ||");
-        System.out.println("|| 4. Eliminar categoría           ||");
-        System.out.println("|| 0. Volver al menú principal     ||");
+        System.out.println("|| 1. Listar categorias            ||");
+        System.out.println("|| 2. Crear categoria              ||");
+        System.out.println("|| 3. Editar categoria             ||");
+        System.out.println("|| 4. Eliminar categoria           ||");
+        System.out.println("|| 0. Volver al menu principal     ||");
         System.out.println("=====================================");
-        System.out.print("Seleccione una opción: ");
+        System.out.print("Seleccione una opcion: ");
     }
 
     public void listarCategorias() {
         if(categoriaServices.listaCategoriasVacia()) {
-            System.out.println("No hay categorías registradas.");
+            System.out.println("No hay categorias registradas.");
         } else {
             List<Categoria> categorias = categoriaServices.getCategorias();
-            System.out.println("Categorías:");
+            System.out.println("Categorias:");
             for (Categoria categoria : categorias) {
                 System.out.println(categoria);
             }
@@ -71,20 +71,20 @@ public class MenuCategoria {
     }
 
     public void crearCategoria() {
-        System.out.print("Ingrese el nombre de la nueva categoría: ");
+        System.out.print("Ingrese el nombre de la nueva categoria: ");
         String nombre = utils.UtilsGeneral.leerString(scanner);
         
         if(categoriaServices.existeCategoriaPorNombre(nombre)) {
-            System.out.println("Ya existe una categoría con ese nombre.");
+            System.out.println("Ya existe una categoria con ese nombre.");
             utils.UtilsGeneral.esperarEnter(scanner);
             return;
         }
 
-        System.out.print("Ingrese una descripcion de la nueva categoría: ");
+        System.out.print("Ingrese una descripcion de la nueva categoria: ");
         String descripcion = utils.UtilsGeneral.leerString(scanner);
 
         categoriaServices.crearCategoria(nombre, descripcion);
-        System.out.println("Categoría creada exitosamente.");
+        System.out.println("Categoria creada exitosamente.");
         utils.UtilsGeneral.esperarEnter(scanner);
     }
 }

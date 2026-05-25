@@ -30,24 +30,24 @@ public class MenuUsuarios {
                     break;
                 case 0:
                     volver = true;
-                    System.out.println("Volviendo al menú principal...");
+                    System.out.println("Volviendo al menu principal...");
                     break;
                 default:
-                    System.out.println("Opción no válida. Por favor, intente nuevamente.");
+                    System.out.println("Opcion no valida. Por favor, intente nuevamente.");
             }
         }
     }
 
     public void mostrar() {
         System.out.println("=====================================");
-        System.out.println("||       GESTIÓN DE USUARIOS       ||");
+        System.out.println("||       GESTION DE USUARIOS       ||");
         System.out.println("=====================================");
         System.out.println("|| 1. Listar usuarios              ||");
         System.out.println("|| 2. Crear usuario                ||");
         System.out.println("|| 3. Editar usuario               ||");
         System.out.println("|| 4. Eliminar usuario             ||");
-        System.out.println("|| 0. Volver al menú principal     ||");
+        System.out.println("|| 0. Volver al menu principal     ||");
         System.out.println("=====================================");
-        System.out.print("Seleccione una opción: ");
+        System.out.print("Seleccione una opcion: ");
     }
 }
