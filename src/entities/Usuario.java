@@ -1,6 +1,6 @@
-package integrado.prog2.entities;
+package entities;
 
-import integrado.prog2.enums.Rol;
+import enums.Rol;
 import java.util.ArrayList;
 import java.util.List;
 

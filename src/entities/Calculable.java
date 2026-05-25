@@ -1,4 +1,4 @@
-package integrado.prog2.entities;
+package entities;
 
 public interface Calculable {
 

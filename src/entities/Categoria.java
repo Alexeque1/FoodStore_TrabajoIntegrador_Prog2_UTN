@@ -1,4 +1,4 @@
-package integrado.prog2.entities;
+package entities;
 
 import java.util.ArrayList;
 import java.util.List;

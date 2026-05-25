@@ -1,5 +1,4 @@
-package integrado.prog2.entities;
-
+package entities;
 public class DetallePedido extends Base {
 
     private int cantidad;

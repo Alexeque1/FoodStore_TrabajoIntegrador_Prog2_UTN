@@ -1,7 +1,7 @@
-package integrado.prog2.entities;
+package entities;
 
-import integrado.prog2.enums.Estado;
-import integrado.prog2.enums.FormaPago;
+import enums.Estado;
+import enums.FormaPago;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
