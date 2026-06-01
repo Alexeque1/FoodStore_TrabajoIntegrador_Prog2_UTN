@@ -47,6 +47,8 @@ public class Categoria extends Base {
 
     @Override
     public String toString() {
-        return "Categoria{id=" + getId() + ", nombre='" + nombre + "', descripcion='" + descripcion + "'}";
+        return "ID: " + getId() + "\n" +
+               "Nombre: " + nombre + "\n" +
+               "Descripción: " + descripcion;
     }
 }
