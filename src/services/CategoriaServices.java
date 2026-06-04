@@ -98,8 +98,7 @@ public class CategoriaServices {
         boolean esOtroNombre = !categoria.getNombre().equalsIgnoreCase(nombre);
 
         if (esOtroNombre && existeCategoriaPorNombre(nombre)) {
-            throw new CategoriaDuplicadaException(
-                    "Ya existe una categoría con ese nombre.");
+            throw new CategoriaDuplicadaException("Ya existe una categoría con ese nombre.");
         }
 
         categoria.setNombre(nombre);
