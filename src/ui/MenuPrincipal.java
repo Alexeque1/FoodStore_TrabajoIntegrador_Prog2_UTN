@@ -9,15 +9,15 @@ public class MenuPrincipal {
 
     private final Scanner scanner = new Scanner(System.in);
     private final CategoriaServices categoriaServices = new CategoriaServices();
-    private final ProductoServices productoServices = new ProductoServices();
+    private final ProductoServices productoServices = new ProductoServices(categoriaServices);
     private final MenuCategoria menuCategoria;
-    private final MenuProductos menuProductos;
+    private final MenuProducto menuProductos;
     private final MenuUsuarios menuUsuarios;
     private final MenuPedidos menuPedidos;
 
     public MenuPrincipal() {
         this.menuCategoria = new MenuCategoria(scanner, categoriaServices);
-        this.menuProductos = new MenuProductos(scanner, productoServices, categoriaServices);
+        this.menuProductos = new MenuProducto(scanner, productoServices, categoriaServices);
         this.menuUsuarios = new MenuUsuarios(scanner);
         this.menuPedidos = new MenuPedidos(scanner);
     }

@@ -49,6 +49,7 @@ public class Categoria extends Base {
     public String toString() {
         return "ID: " + getId() + "\n" +
                "Nombre: " + nombre + "\n" +
-               "Descripción: " + descripcion;
+               "Descripción: " + descripcion + "\n" +
+               "Productos: " + productos.size() + " producto(s)";
     }
 }

@@ -5,9 +5,11 @@ import java.util.Scanner;
 import utils.UtilsMenu;
 import services.CategoriaServices;
 import entities.Categoria;
-import exception.CategoriaDuplicadaException;
-import exception.CategoriaInexistenteException;
+import exception.DatoDuplicadaException;
+import exception.DatoInexistenteException;
+import exception.DatoInvalidoException;
 import utils.UtilsGeneral;
+import utils.UtilsListar;
 
 public class MenuCategoria {
     private final Scanner scanner;
@@ -62,13 +64,11 @@ public class MenuCategoria {
     // OPCIONES
     public void opcion_listarCategorias() {
         UtilsGeneral.tituloSubcategoria("Listar categorías");
-        if (categoriaServices.listaCategoriasEstaVacia()) {
+        List<Categoria> categoriasActivas = categoriaServices.listarActivas();
+        if (categoriasActivas.isEmpty()) {
             System.out.println("No hay categorías para mostrar.");
         } else {
-            categoriaServices.obtenerCategoriasActivas().forEach(categoria -> {
-                System.out.println(categoria);
-                System.out.println("----------------------------");
-            });
+            UtilsListar.listarCategorias(categoriasActivas);
         }
         UtilsGeneral.esperarEnter(scanner);
     }
@@ -93,7 +93,7 @@ public class MenuCategoria {
                     break;
                 }
 
-                categoriaServices.crearCategoria(nombre, descripcion);
+                categoriaServices.crear(nombre, descripcion);
 
                 System.out.println("Categoría creada exitosamente.");
 
@@ -104,9 +104,9 @@ public class MenuCategoria {
                     break;
                 }
 
-            } catch (CategoriaDuplicadaException e) {
+            } catch (DatoDuplicadaException e) {
                 System.out.println(e.getMessage());
-            } catch (IllegalArgumentException e) {
+            } catch (DatoInvalidoException e) {
                 System.out.println(e.getMessage());
             }
 
@@ -120,36 +120,33 @@ public class MenuCategoria {
     public void opcion_editarCategoria() {
         UtilsGeneral.tituloSubcategoria("Editar categorías");
 
-        if (categoriaServices.listaCategoriasEstaVacia()) {
+        List<Categoria> categoriasActivas = categoriaServices.listarActivas();
+        if (categoriasActivas.isEmpty()) {
             System.out.println("No hay categorías para editar.");
             UtilsGeneral.esperarEnter(scanner);
             return;
         }
 
-        categoriaServices.obtenerCategoriasActivas().forEach(categoria -> {
-            System.out.println(categoria);
-            System.out.println("----------------------------");
-        });
+        UtilsListar.listarCategorias(categoriasActivas);
         System.out.println("0. Salir");
         System.out.print("Ingrese el id de la categoría a editar o ingrese cero (0) para salir: ");
 
         Long id = UtilsGeneral.leerId(scanner);
-        if (id == 0) {
+        if (id.equals(0L)) {
             System.out.println("Volviendo al menú de categorías...");
             return;
         }
 
         Categoria categoria;
         try {
-            categoria = categoriaServices.buscarCategoriaPorId(id);
-        } catch (CategoriaInexistenteException | IllegalArgumentException e) {
+            categoria = categoriaServices.buscarPorId(id);
+        } catch (DatoInexistenteException | DatoInvalidoException e) {
             System.out.println(e.getMessage());
             UtilsGeneral.esperarEnter(scanner);
             return;
         }
 
-        boolean salir = false;
-        while (!salir) {
+        while (true) {
             System.out.println("----------------------------");
             System.out.println("Editando categoría: " + categoria.getNombre());
             System.out.println("¿Qué deseas editar?");
@@ -161,21 +158,22 @@ public class MenuCategoria {
             try {
                 switch (opcion) {
                     case 1:
+                        System.out.println("Nombre actual: " + categoria.getNombre());
                         System.out.print("Ingrese el nuevo nombre de la categoría: ");
                         String nuevoNombre = UtilsGeneral.leerString(scanner);
-                        categoriaServices.actualizarCategoria(
-                                categoria,
+                        categoriaServices.editar(
+                                categoria.getId(),
                                 nuevoNombre,
                                 categoria.getDescripcion());
-
                         System.out.println("Nombre actualizado correctamente.");
                         break;
 
                     case 2:
+                        System.out.println("Descripción actual: " + categoria.getDescripcion());
                         System.out.print("Ingrese la nueva descripción de la categoría: ");
                         String nuevaDescripcion = UtilsGeneral.leerString(scanner);
-                        categoriaServices.actualizarCategoria(
-                                categoria,
+                        categoriaServices.editar(
+                                categoria.getId(),
                                 categoria.getNombre(),
                                 nuevaDescripcion);
                         System.out.println("Descripción actualizada correctamente.");
@@ -190,7 +188,7 @@ public class MenuCategoria {
                         continue;
                 }
 
-            } catch (CategoriaDuplicadaException | IllegalArgumentException e) {
+            } catch (DatoDuplicadaException | DatoInvalidoException | DatoInexistenteException e) {
                 System.out.println(e.getMessage());
                 continue;
             }
@@ -199,7 +197,7 @@ public class MenuCategoria {
             String volver = UtilsGeneral.leerString(scanner);
 
             if (!volver.equalsIgnoreCase("s")) {
-                salir = true;
+                break;
             }
         }
 
@@ -208,33 +206,32 @@ public class MenuCategoria {
 
     public void opcion_eliminarCategoria() {
         UtilsGeneral.tituloSubcategoria("Eliminar categorías");
-        if (categoriaServices.listaCategoriasEstaVacia()) {
+        List<Categoria> categoriasActivas = categoriaServices.listarActivas();
+        if (categoriasActivas.isEmpty()) {
             System.out.println("No hay categorías para eliminar.");
             UtilsGeneral.esperarEnter(scanner);
             return;
         }
 
-        categoriaServices.obtenerCategoriasActivas().forEach(categoria -> {
-            System.out.println(categoria);
-            System.out.println("----------------------------");
-        });
+        UtilsListar.listarCategorias(categoriasActivas);
         System.out.println("0. Salir.");
         System.out.print("Ingrese el id de la categoría a eliminar o (0) para salir: ");
         Long id = UtilsGeneral.leerId(scanner);
-        if (id == 0) {
+        if (id.equals(0L)) {
             System.out.println("Volviendo al menú de categorías...");
             return;
         }
 
         Categoria categoria;
         try {
-            categoria = categoriaServices.buscarCategoriaPorId(id);
-        } catch (CategoriaInexistenteException | IllegalArgumentException e) {
+            categoria = categoriaServices.buscarPorId(id);
+        } catch (DatoInexistenteException | DatoInvalidoException e) {
             System.out.println(e.getMessage());
             UtilsGeneral.esperarEnter(scanner);
             return;
         }
         System.out.println("-----------------------------------");
+        System.out.println("Categoría a eliminar: " + categoria.getNombre());
         System.out.print("¿Está seguro que desea eliminar esta categoría? (s/n): ");
         String confirmacion = UtilsGeneral.leerString(scanner);
         if (!confirmacion.equalsIgnoreCase("s")) {
@@ -243,11 +240,10 @@ public class MenuCategoria {
             return;
         }
         try {
-            categoriaServices.eliminarCategoria(categoria);
+            categoriaServices.eliminar(id);
             System.out.println("Categoría eliminada exitosamente.");
-        } catch (IllegalArgumentException e) {
+        } catch (DatoInvalidoException | DatoInexistenteException e) {
             System.out.println(e.getMessage());
         }
-        UtilsGeneral.esperarEnter(scanner);
     }
 }

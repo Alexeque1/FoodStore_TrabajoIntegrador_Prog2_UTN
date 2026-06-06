@@ -3,17 +3,20 @@ package services;
 import java.util.ArrayList;
 import java.util.List;
 import entities.Categoria;
+import utils.MensajesCategoria;
+import utils.MensajesGenerales;
 import utils.UtilsGeneral;
-import exception.CategoriaDuplicadaException;
-import exception.CategoriaInexistenteException;
+import exception.DatoDuplicadaException;
+import exception.DatoInexistenteException;
+import exception.DatoInvalidoException;
 
 public class CategoriaServices {
     private final List<Categoria> categorias = new ArrayList<>();
     private Long idCounter = 1L;
 
-    public Categoria buscarCategoriaPorId(Long id) {
+    public Categoria buscarPorId(Long id) {
         if (id == null) {
-            throw new IllegalArgumentException("El ID no puede ser nulo.");
+            throw new DatoInvalidoException(MensajesGenerales.ERROR_ID_NULO);
         }
 
         for (Categoria categoria : categorias) {
@@ -22,14 +25,14 @@ public class CategoriaServices {
             }
         }
 
-        throw new CategoriaInexistenteException("Categoría no encontrada.");
+        throw new DatoInexistenteException(MensajesCategoria.CATEGORIA_NO_EXISTE);
     }
 
-    public List<Categoria> obtenerTodasLasCategorias() {
+    public List<Categoria> listarTodas() {
         return new ArrayList<>(categorias);
     }
 
-    public List<Categoria> obtenerCategoriasActivas() {
+    public List<Categoria> listarActivas() {
         List<Categoria> categoriasActivas = new ArrayList<>();
         for (Categoria categoria : categorias) {
             if (!categoria.isEliminado()) {
@@ -39,11 +42,7 @@ public class CategoriaServices {
         return categoriasActivas;
     }
 
-    public boolean listaCategoriasEstaVacia() {
-        return obtenerCategoriasActivas().isEmpty();
-    }
-
-    public boolean existeCategoriaPorNombre(String nombre) {
+    public boolean existePorNombre(String nombre) {
         if (!UtilsGeneral.tieneValor(nombre)) {
             return false;
         }
@@ -56,52 +55,58 @@ public class CategoriaServices {
         return false;
     }
 
-    public void crearCategoria(String nombre, String descripcion) {
+    public void crear(String nombre, String descripcion) {
         if (!UtilsGeneral.tieneValor(nombre)) {
-            throw new IllegalArgumentException("El nombre no puede ser nulo o vacio.");
+            throw new DatoInvalidoException(MensajesGenerales.ERROR_NOMBRE_NULO);
         }
         if (descripcion == null) {
-            throw new IllegalArgumentException("La descripción no puede ser nula.");
+            throw new DatoInvalidoException(MensajesGenerales.ERROR_DESCRIPCION_NULA);
         }
-        if (existeCategoriaPorNombre(nombre)) {
-            throw new CategoriaDuplicadaException("Ya existe una categoría con ese nombre.");
-        }
-        
+
         nombre = nombre.trim();
         descripcion = descripcion.trim();
+        if (existePorNombre(nombre)) {
+            throw new DatoDuplicadaException(MensajesCategoria.CATEGORIA_EXISTE);
+        }
         Categoria nuevaCategoria = new Categoria(idCounter++, nombre, descripcion);
         categorias.add(nuevaCategoria);
     }
 
-    public void eliminarCategoria(Categoria categoria) {
-        if (categoria == null) {
-            throw new IllegalArgumentException("La categoría no puede ser nula.");
-        }
+    public void eliminar(Long id) {
+        Categoria categoria = buscarPorId(id);
         categoria.setEliminado(true);
     }
 
-    public void actualizarCategoria(Categoria categoria, String nombre, String descripcion) {
-        if (categoria == null) {
-            throw new IllegalArgumentException("La categoría no puede ser nula.");
+    public void editar(Long id, String nombre, String descripcion) {
+        Categoria categoria = buscarPorId(id);
+
+        if (categoria.getProductos() != null && !categoria.getProductos().isEmpty()) {
+            throw new DatoInvalidoException(MensajesCategoria.CATEGORIA_CON_PRODUCTOS);
         }
 
         if (!UtilsGeneral.tieneValor(nombre)) {
-            throw new IllegalArgumentException("El nombre no puede ser nulo o vacío.");
+            throw new DatoInvalidoException(MensajesGenerales.ERROR_NOMBRE_NULO);
         }
 
         if (descripcion == null) {
-            throw new IllegalArgumentException("La descripción no puede ser nula.");
+            throw new DatoInvalidoException(MensajesGenerales.ERROR_DESCRIPCION_NULA);
         }
 
-        nombre = nombre.trim();
-        descripcion = descripcion.trim();
-        boolean esOtroNombre = !categoria.getNombre().equalsIgnoreCase(nombre);
+        String nombreLimpio = nombre.trim();
+        String descripcionLimpia = descripcion.trim();
 
-        if (esOtroNombre && existeCategoriaPorNombre(nombre)) {
-            throw new CategoriaDuplicadaException("Ya existe una categoría con ese nombre.");
+        boolean esOtroNombre = !categoria.getNombre().equalsIgnoreCase(nombreLimpio);
+
+        if (categoria.getNombre().equalsIgnoreCase(nombreLimpio)
+                && categoria.getDescripcion().equals(descripcionLimpia)) {
+            throw new DatoInvalidoException(MensajesGenerales.ERROR_NO_CAMBIOS);
         }
 
-        categoria.setNombre(nombre);
-        categoria.setDescripcion(descripcion);
+        if (esOtroNombre && existePorNombre(nombreLimpio)) {
+            throw new DatoDuplicadaException(MensajesCategoria.CATEGORIA_EXISTE);
+        }
+
+        categoria.setNombre(nombreLimpio);
+        categoria.setDescripcion(descripcionLimpia);
     }
 }
