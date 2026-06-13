@@ -78,32 +78,37 @@ public class CategoriaServices {
     }
 
     public void editar(Long id, String nombre, String descripcion) {
-        Categoria categoria = buscarPorId(id);
-
-        if (categoria.getProductos() != null && !categoria.getProductos().isEmpty()) {
-            throw new DatoInvalidoException(MensajesCategoria.CATEGORIA_CON_PRODUCTOS);
-        }
-
-        if (!UtilsGeneral.tieneValor(nombre)) {
-            throw new DatoInvalidoException(MensajesGenerales.ERROR_NOMBRE_NULO);
-        }
-
-        if (descripcion == null) {
-            throw new DatoInvalidoException(MensajesGenerales.ERROR_DESCRIPCION_NULA);
-        }
-
-        String nombreLimpio = nombre.trim();
-        String descripcionLimpia = descripcion.trim();
-
-        boolean esOtroNombre = !categoria.getNombre().equalsIgnoreCase(nombreLimpio);
-
-        if (categoria.getNombre().equalsIgnoreCase(nombreLimpio)
-                && categoria.getDescripcion().equals(descripcionLimpia)) {
+        if (nombre == null && descripcion == null) {
             throw new DatoInvalidoException(MensajesGenerales.ERROR_NO_CAMBIOS);
         }
 
-        if (esOtroNombre && existePorNombre(nombreLimpio)) {
-            throw new DatoDuplicadaException(MensajesCategoria.CATEGORIA_EXISTE);
+        Categoria categoria = buscarPorId(id);
+
+        String nombreLimpio = categoria.getNombre();
+        String descripcionLimpia = categoria.getDescripcion();
+
+        if (nombre != null) {
+            if (!UtilsGeneral.tieneValor(nombre)) {
+                throw new DatoInvalidoException(MensajesGenerales.ERROR_NOMBRE_NULO);
+            }
+            nombreLimpio = nombre.trim();
+
+            boolean esOtroNombre = !categoria.getNombre().equalsIgnoreCase(nombreLimpio);
+            if (esOtroNombre && existePorNombre(nombreLimpio)) {
+                throw new DatoDuplicadaException(MensajesCategoria.CATEGORIA_EXISTE);
+            }
+        }
+
+        if (descripcion != null) {
+            if (!UtilsGeneral.tieneValor(descripcion)) {
+                throw new DatoInvalidoException(MensajesGenerales.ERROR_DESCRIPCION_NULA);
+            }
+            descripcionLimpia = descripcion.trim();
+        }
+
+        if (nombreLimpio.equalsIgnoreCase(categoria.getNombre())
+                && descripcionLimpia.equals(categoria.getDescripcion())) {
+            throw new DatoInvalidoException(MensajesGenerales.ERROR_NO_CAMBIOS);
         }
 
         categoria.setNombre(nombreLimpio);

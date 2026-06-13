@@ -66,7 +66,16 @@ public class UtilsGeneral {
                     System.out.print("Entrada no válida. Por favor, ingrese un número de ID válido: ");
                 }
             }
-            System.out.print("Entrada no válida. Por favor, ingrese un número de ID válido: ");
+        }
+    }
+
+    public static String leerEmail(Scanner scanner) {
+        while (true) {
+            String input = scanner.nextLine().trim();
+            if (input != null && !input.isEmpty() && input.contains("@")) {
+                return input;
+            }
+            System.out.print("Entrada no válida. Por favor, ingrese un email válido (debe contener '@'): ");
         }
     }
 

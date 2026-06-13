@@ -13,5 +13,9 @@ public class MensajesProducto {
 
     public static final String ERROR_PRODUCTO_NO_EXISTE = "Producto no encontrado.";
 
+    public static final String ERROR_PRODUCTO_NULO = "El producto no puede ser nulo";
+
     public static final String ERROR_IMAGEN_NULA = "La imagen no puede ser nula.";
+
+    public static final String ERROR_SIN_STOCK = "No hay stock suficiente";
 }

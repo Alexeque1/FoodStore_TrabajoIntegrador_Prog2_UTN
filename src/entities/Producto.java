@@ -90,4 +90,19 @@ public class Producto extends Base {
                 "Stock: " + stock + "\n" +
                 "Categoría: " + (categoria != null ? categoria.getNombre() : "Sin categoría");
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        Categoria other = (Categoria) obj;
+        return getId() != null && getId().equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getId() != null ? getId().hashCode() : 0;
+    }
 }

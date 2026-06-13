@@ -2,6 +2,7 @@ package ui;
 
 import entities.Categoria;
 import entities.Producto;
+import exception.DatoDuplicadaException;
 import exception.DatoInexistenteException;
 import exception.DatoInvalidoException;
 
@@ -142,19 +143,19 @@ public class MenuProducto {
 
             System.out.print("Ingrese el nombre del producto: ");
             String nombre = UtilsGeneral.leerString(scanner);
-
+            System.out.println("-----------------------------------");
             System.out.print("Ingrese la descripción del producto: ");
             String descripcion = UtilsGeneral.leerString(scanner);
-
+            System.out.println("-----------------------------------");
             System.out.print("Ingrese el precio del producto: ");
             Double precio = UtilsGeneral.leerDouble(scanner);
-
+            System.out.println("-----------------------------------");
             System.out.print("Ingrese el stock del producto: ");
             int stock = UtilsGeneral.leerEntero(scanner);
-
+            System.out.println("-----------------------------------");
             System.out.print("Ingrese la imagen del producto: ");
             String imagen = UtilsGeneral.leerString(scanner);
-
+            System.out.println("-----------------------------------");
             System.out.print("Ingrese la disponibilidad del producto (true/false): ");
             Boolean disponible = UtilsGeneral.leerBooleano(scanner);
 
@@ -173,7 +174,7 @@ public class MenuProducto {
                 System.out.println("Producto creado exitosamente.");
                 break;
 
-            } catch (Exception e) {
+            } catch (DatoInvalidoException | DatoDuplicadaException e) {
                 System.out.println("Error al crear el producto: " + e.getMessage());
                 System.out.println("Intente nuevamente.");
             }

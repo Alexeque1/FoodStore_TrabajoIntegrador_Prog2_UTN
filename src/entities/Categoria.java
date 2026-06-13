@@ -7,18 +7,15 @@ public class Categoria extends Base {
 
     private String nombre;
     private String descripcion;
-    private List<Producto> productos;
 
     public Categoria() {
         super();
-        this.productos = new ArrayList<>();
     }
 
     public Categoria(Long id, String nombre, String descripcion) {
         super(id);
         this.nombre = nombre;
         this.descripcion = descripcion;
-        this.productos = new ArrayList<>();
     }
 
     public String getNombre() {
@@ -37,19 +34,10 @@ public class Categoria extends Base {
         this.descripcion = descripcion;
     }
 
-    public List<Producto> getProductos() {
-        return productos;
-    }
-
-    public void setProductos(List<Producto> productos) {
-        this.productos = productos;
-    }
-
     @Override
     public String toString() {
         return "ID: " + getId() + "\n" +
                "Nombre: " + nombre + "\n" +
-               "Descripción: " + descripcion + "\n" +
-               "Productos: " + productos.size() + " producto(s)";
+               "Descripción: " + descripcion + "\n";
     }
 }

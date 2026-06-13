@@ -62,6 +62,16 @@ public class ProductoServices {
         return productosCategoria;
     }
 
+    public List<Producto> listarConStock() {
+        List<Producto> productosConStock = new ArrayList<>();
+        for (Producto producto : productos) {
+            if (!producto.isEliminado() && producto.getStock() > 0) {
+                productosConStock.add(producto);
+            }
+        }
+        return productosConStock;
+    }
+
     public List<Categoria> obtenerCategoriasConProductos() {
         List<Categoria> categorias = new ArrayList<>();
 
@@ -93,7 +103,7 @@ public class ProductoServices {
         if (!UtilsGeneral.tieneValor(nombre)) {
             throw new DatoInvalidoException(MensajesGenerales.ERROR_NOMBRE_NULO);
         }
-        if (precio == null || precio <= 0) {
+        if (precio == null || precio < 0) {
             throw new DatoInvalidoException(MensajesProducto.ERROR_PRECIO_INVALIDO);
         }
         if (stock < 0) {
@@ -159,7 +169,7 @@ public class ProductoServices {
         }
 
         if (precio != null) {
-            if (precio <= 0) {
+            if (precio < 0) {
                 throw new DatoInvalidoException(MensajesProducto.ERROR_PRECIO_INVALIDO);
             }
 

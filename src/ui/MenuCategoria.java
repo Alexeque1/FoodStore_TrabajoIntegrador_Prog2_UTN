@@ -80,10 +80,9 @@ public class MenuCategoria {
             try {
                 System.out.print("Ingrese el nombre de la nueva categoría: ");
                 String nombre = UtilsGeneral.leerString(scanner);
-
+                System.out.println("-----------------------------------");
                 System.out.print("Ingrese una descripción de la nueva categoría: ");
                 String descripcion = UtilsGeneral.leerString(scanner);
-
                 System.out.println("-----------------------------------");
                 System.out.print("¿Está seguro que desea crear esta categoría? (s/n): ");
                 String confirmacion = UtilsGeneral.leerString(scanner);
@@ -146,61 +145,26 @@ public class MenuCategoria {
             return;
         }
 
-        while (true) {
-            System.out.println("----------------------------");
-            System.out.println("Editando categoría: " + categoria.getNombre());
-            System.out.println("¿Qué deseas editar?");
-            System.out.println("(1) Nombre");
-            System.out.println("(2) Descripción");
-            System.out.println("(0) Salir");
-
-            int opcion = UtilsMenu.leerOpcion(scanner);
-            try {
-                switch (opcion) {
-                    case 1:
-                        System.out.println("Nombre actual: " + categoria.getNombre());
-                        System.out.print("Ingrese el nuevo nombre de la categoría: ");
-                        String nuevoNombre = UtilsGeneral.leerString(scanner);
-                        categoriaServices.editar(
-                                categoria.getId(),
-                                nuevoNombre,
-                                categoria.getDescripcion());
-                        System.out.println("Nombre actualizado correctamente.");
-                        break;
-
-                    case 2:
-                        System.out.println("Descripción actual: " + categoria.getDescripcion());
-                        System.out.print("Ingrese la nueva descripción de la categoría: ");
-                        String nuevaDescripcion = UtilsGeneral.leerString(scanner);
-                        categoriaServices.editar(
-                                categoria.getId(),
-                                categoria.getNombre(),
-                                nuevaDescripcion);
-                        System.out.println("Descripción actualizada correctamente.");
-                        break;
-
-                    case 0:
-                        System.out.println("Volviendo al menú de categorías...");
-                        return;
-
-                    default:
-                        System.out.println("Opción no válida.");
-                        continue;
-                }
-
-            } catch (DatoDuplicadaException | DatoInvalidoException | DatoInexistenteException e) {
-                System.out.println(e.getMessage());
-                continue;
-            }
-
-            System.out.print("¿Deseas volver a editar esta categoría? (s/n): ");
-            String volver = UtilsGeneral.leerString(scanner);
-
-            if (!volver.equalsIgnoreCase("s")) {
-                break;
-            }
+        System.out.println("Nombre actual: " + categoria.getNombre());
+        System.out.print("Nuevo nombre (Enter para mantener): ");
+        String nombre = scanner.nextLine().trim();
+        if (nombre.isBlank()) {
+            nombre = null;
         }
 
+        System.out.println("Descripción actual: " + categoria.getDescripcion());
+        System.out.print("Nueva descripción (Enter para mantener): ");
+        String descripcion = scanner.nextLine().trim();
+        if (descripcion.isBlank()) {
+            descripcion = null;
+        }
+
+        try {
+            categoriaServices.editar(id, nombre, descripcion);
+            System.out.println("Categoría editada exitosamente.");
+        } catch (DatoInvalidoException | DatoDuplicadaException | DatoInexistenteException e) {
+            System.out.println("Error al editar la categoría: " + e.getMessage());
+        }
         UtilsGeneral.esperarEnter(scanner);
     }
 

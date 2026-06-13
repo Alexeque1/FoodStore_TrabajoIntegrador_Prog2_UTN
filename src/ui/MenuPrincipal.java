@@ -2,7 +2,9 @@ package ui;
 
 import java.util.Scanner;
 import services.CategoriaServices;
+import services.PedidosServices;
 import services.ProductoServices;
+import services.UsuarioServices;
 import utils.UtilsMenu;
 
 public class MenuPrincipal {
@@ -10,6 +12,8 @@ public class MenuPrincipal {
     private final Scanner scanner = new Scanner(System.in);
     private final CategoriaServices categoriaServices = new CategoriaServices();
     private final ProductoServices productoServices = new ProductoServices(categoriaServices);
+    private final UsuarioServices usuarioServices = new UsuarioServices();
+    private final PedidosServices pedidoServices = new PedidosServices(usuarioServices, productoServices);
     private final MenuCategoria menuCategoria;
     private final MenuProducto menuProductos;
     private final MenuUsuarios menuUsuarios;
@@ -18,8 +22,8 @@ public class MenuPrincipal {
     public MenuPrincipal() {
         this.menuCategoria = new MenuCategoria(scanner, categoriaServices);
         this.menuProductos = new MenuProducto(scanner, productoServices, categoriaServices);
-        this.menuUsuarios = new MenuUsuarios(scanner);
-        this.menuPedidos = new MenuPedidos(scanner);
+        this.menuUsuarios = new MenuUsuarios(scanner, usuarioServices);
+        this.menuPedidos = new MenuPedidos(scanner, productoServices, usuarioServices, pedidoServices);
     }
 
     public void iniciar() {
