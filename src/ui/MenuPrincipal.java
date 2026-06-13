@@ -2,24 +2,28 @@ package ui;
 
 import java.util.Scanner;
 import services.CategoriaServices;
+import services.PedidosServices;
 import services.ProductoServices;
+import services.UsuarioServices;
 import utils.UtilsMenu;
 
 public class MenuPrincipal {
 
     private final Scanner scanner = new Scanner(System.in);
     private final CategoriaServices categoriaServices = new CategoriaServices();
-    private final ProductoServices productoServices = new ProductoServices();
+    private final ProductoServices productoServices = new ProductoServices(categoriaServices);
+    private final UsuarioServices usuarioServices = new UsuarioServices();
+    private final PedidosServices pedidoServices = new PedidosServices(usuarioServices, productoServices);
     private final MenuCategoria menuCategoria;
-    private final MenuProductos menuProductos;
+    private final MenuProducto menuProductos;
     private final MenuUsuarios menuUsuarios;
     private final MenuPedidos menuPedidos;
 
     public MenuPrincipal() {
         this.menuCategoria = new MenuCategoria(scanner, categoriaServices);
-        this.menuProductos = new MenuProductos(scanner, productoServices, categoriaServices);
-        this.menuUsuarios = new MenuUsuarios(scanner);
-        this.menuPedidos = new MenuPedidos(scanner);
+        this.menuProductos = new MenuProducto(scanner, productoServices, categoriaServices);
+        this.menuUsuarios = new MenuUsuarios(scanner, usuarioServices);
+        this.menuPedidos = new MenuPedidos(scanner, productoServices, usuarioServices, pedidoServices);
     }
 
     public void iniciar() {

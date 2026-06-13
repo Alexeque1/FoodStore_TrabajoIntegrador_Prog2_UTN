@@ -5,7 +5,11 @@ import java.util.Scanner;
 import utils.UtilsMenu;
 import services.CategoriaServices;
 import entities.Categoria;
+import exception.DatoDuplicadaException;
+import exception.DatoInexistenteException;
+import exception.DatoInvalidoException;
 import utils.UtilsGeneral;
+import utils.UtilsListar;
 
 public class MenuCategoria {
     private final Scanner scanner;
@@ -23,16 +27,16 @@ public class MenuCategoria {
             int opcion = UtilsMenu.leerOpcion(scanner);
             switch (opcion) {
                 case 1:
-                    listarCategorias();
+                    opcion_listarCategorias();
                     break;
                 case 2:
-                    crearCategoria();
+                    opcion_crearCategoria();
                     break;
                 case 3:
-                    // Lógica para editar categoría
+                    opcion_editarCategoria();
                     break;
                 case 4:
-                    // Lógica para eliminar categoría
+                    opcion_eliminarCategoria();
                     break;
                 case 0:
                     volver = true;
@@ -57,34 +61,153 @@ public class MenuCategoria {
         System.out.print("Seleccione una opcion: ");
     }
 
-    public void listarCategorias() {
-        if(categoriaServices.listaCategoriasVacia()) {
-            System.out.println("No hay categorias registradas.");
+    // OPCIONES
+    public void opcion_listarCategorias() {
+        UtilsGeneral.tituloSubcategoria("Listar categorías");
+        List<Categoria> categoriasActivas = categoriaServices.listarActivas();
+        if (categoriasActivas.isEmpty()) {
+            System.out.println("No hay categorías para mostrar.");
         } else {
-            List<Categoria> categorias = categoriaServices.getCategorias();
-            System.out.println("Categorias:");
-            for (Categoria categoria : categorias) {
-                System.out.println(categoria);
-            }
+            UtilsListar.listarCategorias(categoriasActivas);
         }
-        utils.UtilsGeneral.esperarEnter(scanner);
+        UtilsGeneral.esperarEnter(scanner);
     }
 
-    public void crearCategoria() {
-        System.out.print("Ingrese el nombre de la nueva categoria: ");
-        String nombre = utils.UtilsGeneral.leerString(scanner);
-        
-        if(categoriaServices.existeCategoriaPorNombre(nombre)) {
-            System.out.println("Ya existe una categoria con ese nombre.");
-            utils.UtilsGeneral.esperarEnter(scanner);
+    public void opcion_crearCategoria() {
+        UtilsGeneral.tituloSubcategoria("Crear categorías");
+
+        while (true) {
+            try {
+                System.out.print("Ingrese el nombre de la nueva categoría: ");
+                String nombre = UtilsGeneral.leerString(scanner);
+                System.out.println("-----------------------------------");
+                System.out.print("Ingrese una descripción de la nueva categoría: ");
+                String descripcion = UtilsGeneral.leerString(scanner);
+                System.out.println("-----------------------------------");
+                System.out.print("¿Está seguro que desea crear esta categoría? (s/n): ");
+                String confirmacion = UtilsGeneral.leerString(scanner);
+
+                if (!confirmacion.equalsIgnoreCase("s")) {
+                    System.out.println("Creación de categoría cancelada.");
+                    break;
+                }
+
+                categoriaServices.crear(nombre, descripcion);
+
+                System.out.println("Categoría creada exitosamente.");
+
+                System.out.print("¿Desea crear otra categoría? (s/n): ");
+                String repetir = UtilsGeneral.leerString(scanner);
+
+                if (!repetir.equalsIgnoreCase("s")) {
+                    break;
+                }
+
+            } catch (DatoDuplicadaException e) {
+                System.out.println(e.getMessage());
+            } catch (DatoInvalidoException e) {
+                System.out.println(e.getMessage());
+            }
+
+            System.out.println("-----------------------------------");
+        }
+
+        System.out.println("Volviendo al menú principal...");
+        UtilsGeneral.esperarEnter(scanner);
+    }
+
+    public void opcion_editarCategoria() {
+        UtilsGeneral.tituloSubcategoria("Editar categorías");
+
+        List<Categoria> categoriasActivas = categoriaServices.listarActivas();
+        if (categoriasActivas.isEmpty()) {
+            System.out.println("No hay categorías para editar.");
+            UtilsGeneral.esperarEnter(scanner);
             return;
         }
 
-        System.out.print("Ingrese una descripcion de la nueva categoria: ");
-        String descripcion = utils.UtilsGeneral.leerString(scanner);
+        UtilsListar.listarCategorias(categoriasActivas);
+        System.out.println("0. Salir");
+        System.out.print("Ingrese el id de la categoría a editar o ingrese cero (0) para salir: ");
 
-        categoriaServices.crearCategoria(nombre, descripcion);
-        System.out.println("Categoria creada exitosamente.");
-        utils.UtilsGeneral.esperarEnter(scanner);
+        Long id = UtilsGeneral.leerId(scanner);
+        if (id.equals(0L)) {
+            System.out.println("Volviendo al menú de categorías...");
+            return;
+        }
+
+        Categoria categoria;
+        try {
+            categoria = categoriaServices.buscarPorId(id);
+        } catch (DatoInexistenteException | DatoInvalidoException e) {
+            System.out.println(e.getMessage());
+            UtilsGeneral.esperarEnter(scanner);
+            return;
+        }
+
+        System.out.println("Nombre actual: " + categoria.getNombre());
+        System.out.print("Nuevo nombre (Enter para mantener): ");
+        String nombre = scanner.nextLine().trim();
+        if (nombre.isBlank()) {
+            nombre = null;
+        }
+
+        System.out.println("Descripción actual: " + categoria.getDescripcion());
+        System.out.print("Nueva descripción (Enter para mantener): ");
+        String descripcion = scanner.nextLine().trim();
+        if (descripcion.isBlank()) {
+            descripcion = null;
+        }
+
+        try {
+            categoriaServices.editar(id, nombre, descripcion);
+            System.out.println("Categoría editada exitosamente.");
+        } catch (DatoInvalidoException | DatoDuplicadaException | DatoInexistenteException e) {
+            System.out.println("Error al editar la categoría: " + e.getMessage());
+        }
+        UtilsGeneral.esperarEnter(scanner);
+    }
+
+    public void opcion_eliminarCategoria() {
+        UtilsGeneral.tituloSubcategoria("Eliminar categorías");
+        List<Categoria> categoriasActivas = categoriaServices.listarActivas();
+        if (categoriasActivas.isEmpty()) {
+            System.out.println("No hay categorías para eliminar.");
+            UtilsGeneral.esperarEnter(scanner);
+            return;
+        }
+
+        UtilsListar.listarCategorias(categoriasActivas);
+        System.out.println("0. Salir.");
+        System.out.print("Ingrese el id de la categoría a eliminar o (0) para salir: ");
+        Long id = UtilsGeneral.leerId(scanner);
+        if (id.equals(0L)) {
+            System.out.println("Volviendo al menú de categorías...");
+            return;
+        }
+
+        Categoria categoria;
+        try {
+            categoria = categoriaServices.buscarPorId(id);
+        } catch (DatoInexistenteException | DatoInvalidoException e) {
+            System.out.println(e.getMessage());
+            UtilsGeneral.esperarEnter(scanner);
+            return;
+        }
+        System.out.println("-----------------------------------");
+        System.out.println("Categoría a eliminar: " + categoria.getNombre());
+        System.out.print("¿Está seguro que desea eliminar esta categoría? (s/n): ");
+        String confirmacion = UtilsGeneral.leerString(scanner);
+        if (!confirmacion.equalsIgnoreCase("s")) {
+            System.out.println("Eliminación de categoría cancelada.");
+            UtilsGeneral.esperarEnter(scanner);
+            return;
+        }
+        try {
+            categoriaServices.eliminar(id);
+            System.out.println("Categoría eliminada exitosamente.");
+        } catch (DatoInvalidoException | DatoInexistenteException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

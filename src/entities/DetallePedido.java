@@ -1,4 +1,10 @@
 package entities;
+
+import exception.DatoInvalidoException;
+import utils.MensajesGenerales;
+import utils.MensajesPedidos;
+import utils.MensajesProducto;
+
 public class DetallePedido extends Base {
 
     private int cantidad;
@@ -11,6 +17,15 @@ public class DetallePedido extends Base {
 
     public DetallePedido(Long id, int cantidad, Double subtotal, Producto producto) {
         super(id);
+        if (cantidad <= 0) {
+            throw new DatoInvalidoException(MensajesPedidos.ERROR_CANTIDAD_BAJA);
+        }
+        if (subtotal == null || subtotal < 0) {
+            throw new DatoInvalidoException(MensajesPedidos.ERROR_SUBTOTAL_BAJA);
+        }
+        if (producto == null) {
+            throw new DatoInvalidoException(MensajesProducto.ERROR_PRODUCTO_NULO);
+        }
         this.cantidad = cantidad;
         this.subtotal = subtotal;
         this.producto = producto;
@@ -42,6 +57,7 @@ public class DetallePedido extends Base {
 
     @Override
     public String toString() {
-        return "DetallePedido{id=" + getId() + ", cantidad=" + cantidad + ", subtotal=" + subtotal + ", producto=" + producto + "}";
+        return "DetallePedido{id=" + getId() + ", cantidad=" + cantidad + ", subtotal=" + subtotal + ", producto="
+                + producto + "}";
     }
 }

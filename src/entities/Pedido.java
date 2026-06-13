@@ -2,6 +2,9 @@ package entities;
 
 import enums.Estado;
 import enums.FormaPago;
+import exception.DatoInexistenteException;
+import exception.DatoInvalidoException;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,84 +15,65 @@ public class Pedido extends Base implements Calculable {
     private Estado estado;
     private Double total;
     private FormaPago formaPago;
-    // Composición 1:N — los detalles pertenecen y viven dentro del pedido
     private List<DetallePedido> detalles;
+    private Usuario usuario;
 
-    public Pedido() {
-        super();
+    private Long idCounter = 1L;
+
+    public Pedido(Usuario usuario) {
+        super(null);
         this.fecha = LocalDate.now();
         this.estado = Estado.PENDIENTE;
         this.total = 0.0;
         this.detalles = new ArrayList<>();
+        this.formaPago = FormaPago.EFECTIVO; // Valor por defecto
+        this.usuario = usuario;
     }
 
-    public Pedido(Long id, LocalDate fecha, Estado estado, FormaPago formaPago) {
-        super(id);
-        this.fecha = fecha;
-        this.estado = estado;
-        this.formaPago = formaPago;
-        this.total = 0.0;
-        this.detalles = new ArrayList<>();
-    }
-
-    // -------------------------------------------------------
-    // Métodos propios obligatorios
-    // -------------------------------------------------------
-
-    /**
-     * Agrega un DetallePedido al pedido, o incrementa la cantidad si el
-     * producto ya existe. Recalcula el total al finalizar.
-     */
     public void addDetallePedido(int cantidad, Double precioUnitario, Producto producto) {
-        DetallePedido existente = findeDetallePedidoByProducto(producto);
-        if (existente != null) {
-            existente.setCantidad(existente.getCantidad() + cantidad);
-            existente.setSubtotal(existente.getCantidad() * precioUnitario);
+        DetallePedido findeDetalle = findDetallePedidoByProducto(producto);
+        if (findeDetalle != null) {
+            int nuevaCantidad = findeDetalle.getCantidad() + cantidad;
+            findeDetalle.setCantidad(nuevaCantidad);
+            findeDetalle.setSubtotal(nuevaCantidad * precioUnitario);
         } else {
-            DetallePedido detalle = new DetallePedido();
-            detalle.setCantidad(cantidad);
-            detalle.setSubtotal(cantidad * precioUnitario);
-            detalle.setProducto(producto);
-            detalles.add(detalle);
+            DetallePedido nuevoDetalle = new DetallePedido(idCounter++, cantidad, cantidad * precioUnitario, producto);
+            detalles.add(nuevoDetalle);
         }
-        this.total = calcularTotal();
     }
 
-    /**
-     * Busca y devuelve el DetallePedido asociado a un producto.
-     * Retorna null si no se encuentra.
-     */
-    public DetallePedido findeDetallePedidoByProducto(Producto producto) {
+    public DetallePedido findDetallePedidoByProducto(Producto producto) {
+        if (producto == null) {
+            throw new DatoInvalidoException("El producto no puede ser nulo");
+        }
+
         for (DetallePedido detalle : detalles) {
-            if (detalle.getProducto().getId().equals(producto.getId())) {
+            if (!detalle.isEliminado()
+                    && detalle.getProducto().getId().equals(producto.getId())) {
                 return detalle;
             }
         }
+
         return null;
     }
 
-    /**
-     * Elimina el DetallePedido asociado a un producto y recalcula el total.
-     */
     public void deleteDetallePedidoByProducto(Producto producto) {
-        DetallePedido detalle = findeDetallePedidoByProducto(producto);
+        DetallePedido detalle = findDetallePedidoByProducto(producto);
         if (detalle != null) {
-            detalles.remove(detalle);
-            this.total = calcularTotal();
+            detalle.setEliminado(true);
         }
+        calcularTotal();
     }
 
-    // -------------------------------------------------------
-    // Calculable
-    // -------------------------------------------------------
-
     @Override
-    public Double calcularTotal() {
+    public void calcularTotal() {
         double suma = 0.0;
         for (DetallePedido detalle : detalles) {
-            suma += detalle.getSubtotal();
+            if (!detalle.isEliminado()) {
+                suma += detalle.getSubtotal();
+            }
         }
-        return suma;
+        this.total = suma;
     }
 
     // -------------------------------------------------------
@@ -129,15 +113,12 @@ public class Pedido extends Base implements Calculable {
     }
 
     public List<DetallePedido> getDetalles() {
-        return detalles;
-    }
-
-    public void setDetalles(List<DetallePedido> detalles) {
-        this.detalles = detalles;
+        return new ArrayList<>(detalles);
     }
 
     @Override
     public String toString() {
-        return "Pedido{id=" + getId() + ", fecha=" + fecha + ", estado=" + estado + ", total=" + total + ", formaPago=" + formaPago + "}";
+        return "Pedido{id=" + getId() + ", fecha=" + fecha + ", estado=" + estado + ", total=" + total + ", formaPago="
+                + formaPago + "}";
     }
 }

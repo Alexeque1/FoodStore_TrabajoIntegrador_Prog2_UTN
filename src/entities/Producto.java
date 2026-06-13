@@ -14,11 +14,12 @@ public class Producto extends Base {
         super();
     }
 
-    public Producto(Long id, String nombre, Double precio, String descripcion, int stock, String imagen, Boolean disponible, Categoria categoria) {
+    public Producto(Long id, String nombre, String descripcion, Double precio, int stock, String imagen,
+            Boolean disponible, Categoria categoria) {
         super(id);
         this.nombre = nombre;
-        this.precio = precio;
         this.descripcion = descripcion;
+        this.precio = precio;
         this.stock = stock;
         this.imagen = imagen;
         this.disponible = disponible;
@@ -83,6 +84,25 @@ public class Producto extends Base {
 
     @Override
     public String toString() {
-        return "Producto{id=" + getId() + ", nombre='" + nombre + "', precio=" + precio + ", stock=" + stock + ", disponible=" + disponible + ", categoria=" + (categoria != null ? categoria.getNombre() : "sin categoria") + "}";
+        return "ID: " + getId() + "\n" +
+                "Nombre: " + nombre + "\n" +
+                "Precio: $" + String.format("%.2f", precio) + "\n" +
+                "Stock: " + stock + "\n" +
+                "Categoría: " + (categoria != null ? categoria.getNombre() : "Sin categoría");
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        Categoria other = (Categoria) obj;
+        return getId() != null && getId().equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getId() != null ? getId().hashCode() : 0;
     }
 }
