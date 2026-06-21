@@ -261,3 +261,4 @@ Proyecto académico desarrollado con fines educativos.
 ---
 
 **Autores:** Alexander Sequera · Alejandro Ruiz Díaz
+
