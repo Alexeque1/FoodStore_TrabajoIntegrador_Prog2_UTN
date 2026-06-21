@@ -21,6 +21,12 @@ Aplicación de consola en **Java** para la gestión integral de un comercio tipo
 
 ---
 
+## 🔗 Video Explicativo
+
+[Link](https://www.youtube.com/watch?v=9dOQyNm13NU)
+
+---
+
 ## 📌 Descripción general
 
 El programa simula el back-office de una tienda de comidas. Al iniciarlo se muestra un menú principal desde el cual el usuario puede gestionar las cuatro entidades del sistema. Cada módulo cuenta con sus propias operaciones CRUD (crear, listar, editar, eliminar) y reglas de negocio (validaciones de stock, duplicados, datos obligatorios, etc.).
@@ -256,4 +262,3 @@ Proyecto académico desarrollado con fines educativos.
 
 **Autores:** Alexander Sequera · Alejandro Ruiz Díaz
 
-## Links
